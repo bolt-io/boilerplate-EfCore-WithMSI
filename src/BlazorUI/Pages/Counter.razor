@@ -1,0 +1,40 @@
+@page "/counter"
+
+@using ApplicationCore.SharedKernel.Abstractions
+@using ApplicationCore.Entities
+@inject IAsyncRepository<SampleEntity> repo
+
+<h1>Counter</h1>
+
+<p>Current count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+<hr />
+
+@if (SampleEntities != null && SampleEntities.Count > 0)
+{
+    <h1>Sample Entities:</h1>
+    @foreach (var entity in SampleEntities)
+    {
+        <p>@entity.Id - @entity.ExampleProperty</p>
+    }
+}
+
+
+@code {
+    private int currentCount = 0;
+
+    private IReadOnlyList<SampleEntity> SampleEntities;
+
+    protected override async Task OnInitializedAsync()
+    {
+        SampleEntities = await repo.ListAllAsync();
+
+    }
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+}
