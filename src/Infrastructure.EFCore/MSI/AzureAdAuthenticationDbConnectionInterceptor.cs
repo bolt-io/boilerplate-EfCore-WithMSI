@@ -22,6 +22,7 @@ namespace Infrastructure.EFCore.MSI
 
         public override InterceptionResult ConnectionOpening(DbConnection connection, ConnectionEventData eventData, InterceptionResult result)
         {
+            // this is only suitable for SQL Server. But need to handle postgresql/cosmosDb
             var sqlConnection = (SqlConnection)connection;
             if (DoesConnectionNeedsAccessToken(sqlConnection))
             {
@@ -51,7 +52,8 @@ namespace Infrastructure.EFCore.MSI
             var isAzureDatabase = sqlConnectionStringBuilder.DataSource.Contains("database.windows.net", StringComparison.OrdinalIgnoreCase);
             var isNotUserAuthentication = string.IsNullOrEmpty(sqlConnectionStringBuilder.UserID);
 
-            return isAzureDatabase && isNotUserAuthentication;
+            var isAccessTokenRequired = isAzureDatabase && isNotUserAuthentication;
+            return isAccessTokenRequired;
         }
     }
 }
